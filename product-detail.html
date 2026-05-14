@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description"
+        content="BiteBari - Delicious Homemade Cakes, Pastries, and Fast Food made with love. Order now!">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <title>Product Details - BiteBari</title>
+    <style>
+        .product-detail-container {
+            padding: 50px 0 60px;
+        }
+
+        @media (max-width: 768px) {
+            .product-detail-container {
+                padding: 100px 0 40px;
+            }
+        }
+
+        .detail-img {
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            background: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            height: 450px;
+            /* Fixed height for consistency */
+        }
+
+        .detail-img img {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .detail-info h2 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        @media (max-width: 768px) {
+            .detail-info h2 {
+                font-size: 24px;
+                text-align: center;
+            }
+
+            .detail-info {
+                text-align: center;
+            }
+
+            .detail-info .rating {
+                justify-content: center;
+                display: flex;
+            }
+        }
+
+        .detail-price {
+            font-size: 28px;
+            color: var(--primary-color, #e63946);
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .detail-desc {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .detail-action-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            max-width: 100%;
+        }
+
+        @media (max-width: 480px) {
+            .detail-action-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .detail-action-row .qty {
+                width: 100% !important;
+            }
+        }
+
+        .detail-action-row .qty {
+            width: 70px;
+            height: 50px;
+            font-size: 18px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .detail-action-row .add-to-cart {
+            height: 50px;
+            font-size: 18px;
+            padding: 0 40px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Preloader Start -->
+    <div id="preloader">
+        <div class="loader">
+            <img src="img/logo.png" alt="BiteBari Logo">
+            <div class="spinner"></div>
+        </div>
+    </div>
+    <!-- Preloader End -->
+    <header>
+        <nav class="main-menu navbar navbar-expand-md fixed-top">
+            <div class="container">
+                <nav class="navbar">
+                </nav>
+                <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#maid-menu-items">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="maid-menu-items">
+                    <ul class="navbar-nav ms-auto text-end align-items-center">
+                        <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                        <li class="nav-item"><a href="products.html" class="nav-link active">Our Product</a></li>
+                        <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+                        <li class="nav-item">
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav><!--end main-menu-->
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="logo d-none d-md-block">
+                        <a href="index.html"><img src="img/logo.png" alt="BiteBari Logo"></a>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="social">
+                        <ul class="float-md-end">
+                            <li class="d-inline-block"><a href="https://www.facebook.com/share/1ALigvM8kB/"
+                                    class="d-block" target="_blank"><i class="fa-brands fa-facebook-f"
+                                        aria-hidden="true"></i></a></li>
+                            <li class="d-inline-block"><a href="https://www.youtube.com/@imsinasikder" class="d-block"
+                                    target="_blank"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a></li>
+                            <li class="d-inline-block"><a href="#" class="d-block" target="_blank"><i
+                                        class="fa-brands fa-instagram" aria-hidden="true"></i></a></li>
+                            <li class="d-inline-block"><a href="#" class="d-block" target="_blank"><i
+                                        class="fa-solid fa-utensils" aria-hidden="true"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </header>
+
+    <div class="container product-detail-container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="detail-img shadow-sm rounded">
+                    <img src="img/product/1.png" alt="Product Image" id="detail-img">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="detail-info">
+                    <h2 id="detail-title">Vanilla With Light Chocolate Cake</h2>
+                    <div class="rating mb-3">
+                        <span style="color: gold;"><i class="fa fa-star"></i><i class="fa fa-star"></i><i
+                                class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i></span>
+                        <span class="text-muted">(12 Reviews)</span>
+                    </div>
+                    <p class="detail-price" id="detail-price">৳ 850.00</p>
+                    
+                    <div class="product-actions mb-4">
+                        <a href="https://wa.me/8801738010414?text=Hello%20BiteBari!%20I%20would%20like%20to%20order%20a%20cake." class="btn-wa" id="wa-order-link" target="_blank"><i class="fab fa-whatsapp"></i> Order on WhatsApp</a>
+                        <button class="btn-share" onclick="shareProduct()"><i class="fas fa-arrow-up-from-bracket"></i> Share this Product</button>
+                    </div>
+
+                    <p class="stock mb-4" style="color:#2e7d32;"><i class="fa fa-check-circle"></i> In Stock</p>
+                    <p class="detail-desc">
+                        Delicious homemade cake made with fresh ingredients. Perfect for birthdays, anniversaries, or
+                        just a sweet treat. Customizable options available upon request.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <footer>
+        <div class="footer-end">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="footer-logo">
+                            <img src="img/logo-f.png" alt="Footer Logo">
+                            <p>© 2025 BiteBari. All Rights Reserved. | Homemade cakes and pastries. Made with <span
+                                    class="heart">❤</span></p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="social-f">
+                            <div class="icon-f float-md-end">
+                                <ul>
+                                    <li class="d-inline-block" data-bs-toggle="tooltip" data-bs-placement="top"
+                                        data-bs-title="Facebook">
+                                        <a href="https://www.facebook.com/share/1ALigvM8kB/" class="d-block"
+                                            target="_blank"><i class="fa-brands fa-facebook-f"
+                                                aria-hidden="true"></i></a>
+                                    </li>
+                                    <li class="d-inline-block" data-bs-toggle="tooltip" data-bs-placement="top"
+                                        data-bs-title="Youtube">
+                                        <a href="https://www.youtube.com/@imsinasikder" class="d-block"
+                                            target="_blank"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
+                                    </li>
+                                    <li class="d-inline-block" data-bs-toggle="tooltip" data-bs-placement="top"
+                                        data-bs-title="Instagram">
+                                        <a href="#" class="d-block" target="_blank"><i class="fa-brands fa-instagram"
+                                                aria-hidden="true"></i></a>
+                                    </li>
+                                    <li class="d-inline-block" data-bs-toggle="tooltip" data-bs-placement="top"
+                                        data-bs-title="Twitter">
+                                        <a href="#" class="d-block" target="_blank"><i class="fa-brands fa-twitter"
+                                                aria-hidden="true"></i></a>
+                                    </li>
+                                    <li class="d-inline-block" data-bs-toggle="tooltip" data-bs-placement="top"
+                                        data-bs-title="Delicious">
+                                        <a href="#" class="d-block" target="_blank"><i class="fa-solid fa-utensils"
+                                                aria-hidden="true"></i></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/products-data.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/custom.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+
+            if (id && PRODUCTS_DATA[id]) {
+                const product = PRODUCTS_DATA[id];
+
+                // Update text content
+                document.getElementById('detail-title').textContent = product.name;
+                document.getElementById('detail-price').textContent = `৳ ${product.price}`;
+                document.querySelector('.detail-desc').textContent = product.description;
+                document.getElementById('detail-img').src = product.image;
+                document.getElementById('detail-img').alt = product.name;
+
+                // Update Stock Status
+                const stockEl = document.querySelector('.stock');
+                const waLink = document.getElementById('wa-order-link');
+                if (product.inStock === false) {
+                    stockEl.innerHTML = '<i class="fa fa-times-circle"></i> Out of Stock';
+                    stockEl.style.setProperty('color', 'red', 'important');
+                    if (waLink) {
+                        waLink.style.pointerEvents = 'none';
+                        waLink.style.opacity = '0.5';
+                        waLink.innerHTML = '<i class="fab fa-whatsapp"></i> Out of Stock';
+                    }
+                } else {
+                    stockEl.innerHTML = '<i class="fa fa-check-circle"></i> In Stock';
+                    stockEl.style.setProperty('color', '#2e7d32', 'important');
+                    if (waLink) {
+                        waLink.style.pointerEvents = 'auto';
+                        waLink.style.opacity = '1';
+                        waLink.innerHTML = '<i class="fab fa-whatsapp"></i> Order on WhatsApp';
+                        const encodedName = encodeURIComponent(product.name);
+                        waLink.href = `https://wa.me/8801738010414?text=Hello%20BiteBari!%20I%20would%20like%20to%20order%20${encodedName}.`;
+                    }
+                }
+
+            } else {
+                // If no ID, redirect back to products
+                // window.location.href = 'products.html';
+                console.error("Product not found");
+            }
+        });
+
+        function shareProduct() {
+            const url = window.location.href;
+            const title = document.title;
+            if (navigator.share) {
+                navigator.share({
+                    title: title,
+                    url: url
+                }).catch(err => console.error("Error sharing:", err));
+            } else {
+                // Fallback: Copy to clipboard
+                navigator.clipboard.writeText(url).then(() => {
+                    alert("Product link copied to clipboard!");
+                }).catch(err => {
+                    console.error("Failed to copy link:", err);
+                });
+            }
+        }
+    </script>
+</body>
+
+</html>
