@@ -205,9 +205,6 @@
     </div>
 
 
-                </div>
-            </div>
-        </div>
     </div>
 
 
@@ -269,12 +266,12 @@
     <script src="js/bootstrap.bundle.min.js"></script>
     <script src="js/custom.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        function renderProductDetails(products) {
             const params = new URLSearchParams(window.location.search);
             const id = params.get('id');
 
-            if (id && PRODUCTS_DATA[id]) {
-                const product = PRODUCTS_DATA[id];
+            if (id && products[id]) {
+                const product = products[id];
 
                 // Update text content
                 document.getElementById('detail-title').textContent = product.name;
@@ -286,6 +283,8 @@
                 // Update Stock Status
                 const stockEl = document.querySelector('.stock');
                 const waLink = document.getElementById('wa-order-link');
+                
+                // Explicitly check for false (Out of Stock)
                 if (product.inStock === false) {
                     stockEl.innerHTML = '<i class="fa fa-times-circle"></i> Out of Stock';
                     stockEl.style.setProperty('color', 'red', 'important');
@@ -293,6 +292,7 @@
                         waLink.style.pointerEvents = 'none';
                         waLink.style.opacity = '0.5';
                         waLink.innerHTML = '<i class="fab fa-whatsapp"></i> Out of Stock';
+                        waLink.href = "javascript:void(0)";
                     }
                 } else {
                     stockEl.innerHTML = '<i class="fa fa-check-circle"></i> In Stock';
@@ -307,9 +307,19 @@
                 }
 
             } else {
-                // If no ID, redirect back to products
-                // window.location.href = 'products.html';
-                console.error("Product not found");
+                console.error("Product not found or data not ready");
+            }
+        }
+
+        // Listen for data from Firebase
+        document.addEventListener('productsDataReady', function (e) {
+            renderProductDetails(e.detail);
+        });
+
+        // Try to render on load if data is already available
+        document.addEventListener('DOMContentLoaded', function () {
+            if (window.PRODUCTS_DATA) {
+                renderProductDetails(window.PRODUCTS_DATA);
             }
         });
 
