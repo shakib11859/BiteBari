@@ -120,9 +120,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Auto-update stock status and render products dynamically
-    if (typeof window.PRODUCTS_DATA !== 'undefined') {
+    if (Object.keys(window.PRODUCTS_DATA || {}).length > 0) {
         renderDynamicProducts();
     }
+    document.addEventListener('productsDataReady', () => {
+        renderDynamicProducts();
+    });
 });
 
 // === Global Loading Utility ===
