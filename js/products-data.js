@@ -169,7 +169,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
-window.PRODUCTS_DATA = {};
+window.PRODUCTS_DATA = INITIAL_PRODUCTS_DATA; // Initialize with defaults immediately
 
 // --- Firebase State Management ---
 function initProducts(callback) {
@@ -192,11 +192,17 @@ function initProducts(callback) {
         
         // Custom event for pages to know data is ready
         document.dispatchEvent(new CustomEvent('productsDataReady', { detail: window.PRODUCTS_DATA }));
+    }, (error) => {
+        console.error("Firebase read failed:", error);
+        // On error, we already have INITIAL_PRODUCTS_DATA set, so just signal ready
+        document.dispatchEvent(new CustomEvent('productsDataReady', { detail: window.PRODUCTS_DATA }));
     });
 }
 
 function saveProducts() {
-    return database.ref('products').set(window.PRODUCTS_DATA);
+    return database.ref('products').set(window.PRODUCTS_DATA).catch(error => {
+        console.error("Firebase save failed:", error);
+    });
 }
 
 // Global initialization
