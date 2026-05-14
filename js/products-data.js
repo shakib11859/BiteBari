@@ -169,6 +169,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
+window.productsLoaded = false;
 window.PRODUCTS_DATA = INITIAL_PRODUCTS_DATA; // Initialize with defaults immediately
 
 // --- Firebase State Management ---
@@ -179,6 +180,7 @@ function initProducts(callback) {
     const productsRef = database.ref('products');
     productsRef.on('value', (snapshot) => {
         const data = snapshot.val();
+        window.productsLoaded = true;
         if (data) {
             window.PRODUCTS_DATA = data;
         } else {
@@ -200,10 +202,17 @@ function initProducts(callback) {
 }
 
 function saveProducts() {
-    return database.ref('products').set(window.PRODUCTS_DATA).catch(error => {
-        console.error("Firebase save failed:", error);
-    });
+    console.log("Attempting to save products...", window.PRODUCTS_DATA);
+    return database.ref('products').set(window.PRODUCTS_DATA)
+        .then(() => {
+            console.log("Products saved successfully to Firebase.");
+        })
+        .catch(error => {
+            console.error("Firebase save failed:", error);
+            throw error; // Re-throw so callers can handle it
+        });
 }
+window.saveProducts = saveProducts;
 
 // Global initialization
 document.addEventListener('DOMContentLoaded', () => {
