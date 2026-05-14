@@ -153,20 +153,53 @@ const INITIAL_PRODUCTS_DATA = {
     }
 };
 
-// --- LocalStorage State Management ---
-function initProducts() {
-    const stored = localStorage.getItem('BITEBARI_PRODUCTS');
-    if (stored) {
-        window.PRODUCTS_DATA = JSON.parse(stored);
-    } else {
-        window.PRODUCTS_DATA = INITIAL_PRODUCTS_DATA;
-        saveProducts();
-    }
+// --- Firebase Configuration ---
+const firebaseConfig = {
+    apiKey: "AIzaSyAz33iUStZdjUP-pUYl1vDJEQvGOSQamKE",
+    authDomain: "bite-bari.firebaseapp.com",
+    databaseURL: "https://bite-bari-default-rtdb.firebaseio.com",
+    projectId: "bite-bari",
+    storageBucket: "bite-bari.firebasestorage.app",
+    messagingSenderId: "16801081945",
+    appId: "1:16801081945:web:2b30cdc4fdaff989a7df48",
+    measurementId: "G-7BBVGJL64Y"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+
+window.PRODUCTS_DATA = {};
+
+// --- Firebase State Management ---
+function initProducts(callback) {
+    // Show global loading if available
+    if (window.showLoading) window.showLoading();
+
+    const productsRef = database.ref('products');
+    productsRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            window.PRODUCTS_DATA = data;
+        } else {
+            // If database is empty, seed it with initial data
+            window.PRODUCTS_DATA = INITIAL_PRODUCTS_DATA;
+            saveProducts();
+        }
+        
+        if (window.hideLoading) window.hideLoading();
+        if (callback) callback(window.PRODUCTS_DATA);
+        
+        // Custom event for pages to know data is ready
+        document.dispatchEvent(new CustomEvent('productsDataReady', { detail: window.PRODUCTS_DATA }));
+    });
 }
 
 function saveProducts() {
-    localStorage.setItem('BITEBARI_PRODUCTS', JSON.stringify(window.PRODUCTS_DATA));
+    return database.ref('products').set(window.PRODUCTS_DATA);
 }
 
-// Initialize on load
-initProducts();
+// Global initialization
+document.addEventListener('DOMContentLoaded', () => {
+    initProducts();
+});
