@@ -103,6 +103,22 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    // === Mobile Menu Auto-Close ===
+    const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+    const menuCollapse = document.getElementById('maid-menu-items');
+    if (menuCollapse) {
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 768) {
+                    const bsCollapse = new bootstrap.Collapse(menuCollapse, {
+                        toggle: false
+                    });
+                    bsCollapse.hide();
+                }
+            });
+        });
+    }
+
     // Auto-update stock status and render products dynamically
     if (typeof window.PRODUCTS_DATA !== 'undefined') {
         renderDynamicProducts();
