@@ -188,6 +188,11 @@
             const file = document.getElementById('p-image-file').files[0];
             const saveBtn = document.getElementById('saveBtn');
 
+            if (!window.productsLoaded) {
+                alert("Please wait for products to load from database before saving.");
+                return;
+            }
+
             if (!name || !price) {
                 alert("Please enter Name and Price");
                 return;
@@ -209,11 +214,14 @@
                                 const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                                 document.querySelector('#uploadProgress .progress-bar').style.width = progress + '%';
                             }, 
-                            (error) => reject(error), 
+                            (error) => {
+                                console.error("Upload error:", error);
+                                reject(new Error("Image upload failed: " + error.message));
+                            }, 
                             () => {
-                                uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                                    resolve(downloadURL);
-                                });
+                                uploadTask.snapshot.ref.getDownloadURL()
+                                    .then((downloadURL) => resolve(downloadURL))
+                                    .catch(err => reject(new Error("Failed to get image URL: " + err.message)));
                             }
                         );
                     });
