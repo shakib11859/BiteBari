@@ -61,35 +61,33 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (!slider) return;
 
-        // Auto-scroll on hover (Step-by-Step "Round" effect)
-        let isHovered = false;
+        // Auto-scroll continuously
         let stepInterval;
         const scrollStep = 300; // Amount to scroll each time (one card width + gap)
 
         function nextSlide() {
-            if (isHovered) {
-                const maxScroll = slider.scrollWidth - slider.clientWidth;
-                let newScroll = slider.scrollLeft + scrollStep;
+            const maxScroll = slider.scrollWidth - slider.clientWidth;
+            let newScroll = slider.scrollLeft + scrollStep;
 
-                if (newScroll >= maxScroll + 10) {
-                    // Loop back to start smoothly
-                    slider.scrollTo({ left: 0, behavior: 'smooth' });
-                } else {
-                    // Move to next product
-                    slider.scrollTo({ left: newScroll, behavior: 'smooth' });
-                }
+            if (newScroll >= maxScroll + 10) {
+                // Loop back to start smoothly
+                slider.scrollTo({ left: 0, behavior: 'smooth' });
+            } else {
+                // Move to next product
+                slider.scrollTo({ left: newScroll, behavior: 'smooth' });
             }
         }
 
+        // Start scrolling automatically
+        stepInterval = setInterval(nextSlide, 2000);
+
+        // Pause auto-scroll on hover for better UX
         wrapper.addEventListener('mouseenter', () => {
-            isHovered = true;
-            nextSlide(); 
-            stepInterval = setInterval(nextSlide, 2000); 
+            clearInterval(stepInterval);
         });
 
         wrapper.addEventListener('mouseleave', () => {
-            isHovered = false;
-            clearInterval(stepInterval);
+            stepInterval = setInterval(nextSlide, 2000);
         });
 
         // Arrow navigation
