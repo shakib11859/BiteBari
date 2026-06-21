@@ -165,9 +165,18 @@ const firebaseConfig = {
     measurementId: "G-7BBVGJL64Y"
 };
 
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
+// Initialize Firebase safely
+let database = null;
+try {
+    if (typeof firebase !== 'undefined') {
+        firebase.initializeApp(firebaseConfig);
+        database = firebase.database();
+    } else {
+        console.warn("Firebase SDK not loaded. Running in local fallback mode.");
+    }
+} catch (error) {
+    console.error("Firebase initialization failed:", error);
+}
 
 window.productsLoaded = false;
 window.PRODUCTS_DATA = INITIAL_PRODUCTS_DATA; // Initialize with defaults immediately
@@ -177,39 +186,88 @@ function initProducts(callback) {
     // Show global loading if available
     if (window.showLoading) window.showLoading();
 
-    const productsRef = database.ref('products');
-    productsRef.on('value', (snapshot) => {
-        const data = snapshot.val();
+    // If database is not available, immediately fallback and hide loader
+    if (!database) {
+        console.warn("Firebase database not available. Using fallback data immediately.");
         window.productsLoaded = true;
-        if (data) {
-            window.PRODUCTS_DATA = data;
-        } else {
-            // If database is empty, seed it with initial data
-            window.PRODUCTS_DATA = INITIAL_PRODUCTS_DATA;
-            saveProducts();
-        }
-        
-        if (window.hideLoading) window.hideLoading();
+        document.dispatchEvent(new CustomEvent('productsDataReady', { detail: window.PRODUCTS_DATA }));
         if (callback) callback(window.PRODUCTS_DATA);
+        setTimeout(() => {
+            if (window.hideLoading) window.hideLoading();
+        }, 100);
+        return;
+    }
+
+    try {
+        const productsRef = database.ref('products');
         
-        // Custom event for pages to know data is ready
+        // Safety timeout: if Firebase doesn't respond in 4 seconds, use fallback data
+        const timeout = setTimeout(() => {
+            if (!window.productsLoaded) {
+                console.warn("Firebase initialization timed out. Using fallback data.");
+                window.productsLoaded = true;
+                document.dispatchEvent(new CustomEvent('productsDataReady', { detail: window.PRODUCTS_DATA }));
+                if (callback) callback(window.PRODUCTS_DATA);
+                if (window.hideLoading) window.hideLoading();
+            }
+        }, 4000);
+
+        productsRef.on('value', (snapshot) => {
+            clearTimeout(timeout);
+            const data = snapshot.val();
+            window.productsLoaded = true;
+            if (data) {
+                window.PRODUCTS_DATA = data;
+            } else {
+                // If database is empty, seed it with initial data
+                window.PRODUCTS_DATA = INITIAL_PRODUCTS_DATA;
+                saveProducts().catch(() => {}); // Attempt to seed but don't block
+            }
+            
+            if (window.hideLoading) window.hideLoading();
+            if (callback) callback(window.PRODUCTS_DATA);
+            
+            // Custom event for pages to know data is ready
+            document.dispatchEvent(new CustomEvent('productsDataReady', { detail: window.PRODUCTS_DATA }));
+        }, (error) => {
+            clearTimeout(timeout);
+            console.error("Firebase read failed:", error);
+            window.productsLoaded = true;
+            document.dispatchEvent(new CustomEvent('productsDataReady', { detail: window.PRODUCTS_DATA }));
+            if (callback) callback(window.PRODUCTS_DATA);
+            if (window.hideLoading) window.hideLoading();
+        });
+    } catch (e) {
+        console.error("Error setting up database ref / listeners:", e);
+        window.productsLoaded = true;
         document.dispatchEvent(new CustomEvent('productsDataReady', { detail: window.PRODUCTS_DATA }));
-    }, (error) => {
-        console.error("Firebase read failed:", error);
-        // On error, we already have INITIAL_PRODUCTS_DATA set, so just signal ready
-        document.dispatchEvent(new CustomEvent('productsDataReady', { detail: window.PRODUCTS_DATA }));
-    });
+        if (callback) callback(window.PRODUCTS_DATA);
+        if (window.hideLoading) window.hideLoading();
+    }
 }
 
 function saveProducts() {
     console.log("Attempting to save products...", window.PRODUCTS_DATA);
-    return database.ref('products').set(window.PRODUCTS_DATA)
+    
+    if (!database) {
+        console.error("Firebase database not available. Cannot save.");
+        return Promise.reject(new Error("Firebase database not available. Running in local-only fallback mode."));
+    }
+
+    // Create a promise that rejects after 10 seconds
+    const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error("Database save timed out. Please check your internet connection or Firebase rules.")), 10000)
+    );
+
+    const savePromise = database.ref('products').set(window.PRODUCTS_DATA)
         .then(() => {
             console.log("Products saved successfully to Firebase.");
-        })
+        });
+
+    return Promise.race([savePromise, timeoutPromise])
         .catch(error => {
             console.error("Firebase save failed:", error);
-            throw error; // Re-throw so callers can handle it
+            throw error;
         });
 }
 window.saveProducts = saveProducts;
