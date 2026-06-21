@@ -128,8 +128,8 @@
             document.getElementById('adminPassword').value = '';
         }
 
-        // Initialize Firebase Storage
-        const storage = firebase.storage();
+        // Initialize Firebase Storage safely
+        const storage = typeof firebase !== 'undefined' ? firebase.storage() : null;
 
         // Listen for Firebase updates and re-render if logged in
         document.addEventListener('productsDataReady', () => {
@@ -204,27 +204,38 @@
             try {
                 // Handle Image Upload if file selected
                 if (file) {
+                    if (!storage) {
+                        alert("Storage service is not available (Firebase failed to load). Cannot upload image.");
+                        saveBtn.disabled = false;
+                        saveBtn.innerHTML = 'Save Product';
+                        return;
+                    }
                     document.getElementById('uploadProgress').style.display = 'block';
                     const storageRef = storage.ref('products/' + id + '_' + file.name);
                     const uploadTask = storageRef.put(file);
 
-                    imageUrl = await new Promise((resolve, reject) => {
-                        uploadTask.on('state_changed', 
-                            (snapshot) => {
-                                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                                document.querySelector('#uploadProgress .progress-bar').style.width = progress + '%';
-                            }, 
-                            (error) => {
-                                console.error("Upload error:", error);
-                                reject(new Error("Image upload failed: " + error.message));
-                            }, 
-                            () => {
-                                uploadTask.snapshot.ref.getDownloadURL()
-                                    .then((downloadURL) => resolve(downloadURL))
-                                    .catch(err => reject(new Error("Failed to get image URL: " + err.message)));
-                            }
-                        );
-                    });
+                    imageUrl = await Promise.race([
+                        new Promise((resolve, reject) => {
+                            uploadTask.on('state_changed', 
+                                (snapshot) => {
+                                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                                    document.querySelector('#uploadProgress .progress-bar').style.width = progress + '%';
+                                }, 
+                                (error) => {
+                                    console.error("Upload error:", error);
+                                    reject(new Error("Image upload failed: " + error.message));
+                                }, 
+                                () => {
+                                    uploadTask.snapshot.ref.getDownloadURL()
+                                        .then((downloadURL) => resolve(downloadURL))
+                                        .catch(err => reject(new Error("Failed to get image URL: " + err.message)));
+                                }
+                            );
+                        }),
+                        new Promise((_, reject) => 
+                            setTimeout(() => reject(new Error("Image upload timed out (15s). Try a smaller image or check your connection.")), 15000)
+                        )
+                    ]);
                 }
 
                 // Final save to Database
