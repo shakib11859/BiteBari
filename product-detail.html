@@ -312,8 +312,13 @@
                         waLink.style.opacity = '1';
                         waLink.innerHTML = '<i class="fab fa-whatsapp"></i> Order on WhatsApp';
                         
+                        // Use the API endpoint so WhatsApp shows the product's image in preview
+                        const params = new URLSearchParams(window.location.search);
+                        const productId = params.get('id');
+                        const shareLink = `https://bite-bari.vercel.app/api/product?id=${productId}`;
+                        
                         const text = `Hello BiteBari! I would like to order this product
-${window.location.href}`;
+${shareLink}`;
 
                         waLink.href = `https://wa.me/8801738010414?text=${encodeURIComponent(text)}`;
                     }
