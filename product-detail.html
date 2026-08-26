@@ -11,7 +11,7 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="BiteBari - Delicious Homemade Cakes & Pastries">
     <meta property="og:description" content="Order delicious homemade cakes, pastries, and sweets from BiteBari. Made with love and delivered to your doorstep.">
-    <meta property="og:image" content="https://bite-bari.web.app/img/logo.png">
+    <meta property="og:image" content="https://bite-bari.vercel.app/img/logo.png">
     
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
@@ -309,8 +309,15 @@
                         waLink.style.opacity = '1';
                         waLink.innerHTML = '<i class="fab fa-whatsapp"></i> Order on WhatsApp';
                         
+                        let productImgUrl = product.image || '';
+                        if (productImgUrl && !productImgUrl.startsWith('http')) {
+                            // Convert relative path to absolute URL
+                            const path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
+                            productImgUrl = window.location.origin + path + '/' + productImgUrl.replace(/^\//, '');
+                        }
+                        
                         const text = `Hello BiteBari! I would like to order this product
-${window.location.href}`;
+${productImgUrl}`;
 
                         waLink.href = `https://wa.me/8801738010414?text=${encodeURIComponent(text)}`;
                     }
