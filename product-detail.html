@@ -309,15 +309,8 @@
                         waLink.style.opacity = '1';
                         waLink.innerHTML = '<i class="fab fa-whatsapp"></i> Order on WhatsApp';
                         
-                        let productImgUrl = product.image || '';
-                        if (productImgUrl && !productImgUrl.startsWith('http')) {
-                            // Convert relative path to absolute URL
-                            const path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
-                            productImgUrl = window.location.origin + path + '/' + productImgUrl.replace(/^\//, '');
-                        }
-                        
                         const text = `Hello BiteBari! I would like to order this product
-${productImgUrl}`;
+${window.location.href}`;
 
                         waLink.href = `https://wa.me/8801738010414?text=${encodeURIComponent(text)}`;
                     }
