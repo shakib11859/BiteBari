@@ -312,17 +312,13 @@
                         waLink.style.opacity = '1';
                         waLink.innerHTML = '<i class="fab fa-whatsapp"></i> Order on WhatsApp';
                         
-                        // Use the server-side product preview URL so WhatsApp can read
-                        // the correct Open Graph image, title, description and price.
-                        const siteUrl = 'https://bite-bari.vercel.app';
-                        const previewUrl = `${siteUrl}/api/product?id=${encodeURIComponent(id)}`;
-
-                        const text = `Hello BiteBari! I would like to order:
-
-🎂 Product: ${product.name}
-💰 Price: ৳${product.price}
-
-${previewUrl}`;
+                        // Use the API endpoint so WhatsApp shows the product's image in preview
+                        const params = new URLSearchParams(window.location.search);
+                        const productId = params.get('id');
+                        const shareLink = `https://bite-bari.vercel.app/api/product?id=${productId}`;
+                        
+                        const text = `Hello BiteBari! I would like to order this product
+${shareLink}`;
 
                         waLink.href = `https://wa.me/8801738010414?text=${encodeURIComponent(text)}`;
                     }
